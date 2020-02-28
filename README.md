@@ -1,6 +1,6 @@
 Please have a look at the [wiki](https://github.com/obfuscator-llvm/obfuscator/wiki)!
 
-Current version: [LLVM-9.0](https://github.com/obfuscator-llvm/obfuscator/tree/llvm-9.0)
+Current version: [LLVM-9.0](https://github.com/iamywang/obfuscator/tree/llvm-9.0)
 
 You can cite Obfuscator-LLVM using the following Bibtex entry:
 
