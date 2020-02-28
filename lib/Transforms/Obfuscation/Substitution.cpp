@@ -98,9 +98,9 @@ namespace {
 
             funcDiv[0] = &Substitution::divNeg;
 
-            funcRem[0] = &Substitution::remReady;
+            funcRem[0] = &Substitution::remObfuscation;
 
-            funcShi[0] = &Substitution::shiReady;
+            funcShi[0] = &Substitution::shiObfuscation;
         }
 
         bool runOnFunction(Function &F);
@@ -139,9 +139,9 @@ namespace {
 
         void divNeg(BinaryOperator *bo);
 
-        void remReady(BinaryOperator *bo);
+        void remObfuscation(BinaryOperator *bo);
 
-        void shiReady(BinaryOperator *bo);
+        void shiObfuscation(BinaryOperator *bo);
     };
 } // namespace
 
@@ -641,9 +641,9 @@ void Substitution::mulNeg(BinaryOperator *bo) {
         bo->replaceAllUsesWith(op);
     } else if (bo->getOpcode() == Instruction::FMul) {
         // b => -b
-        op1 = BinaryOperator::CreateNeg(bo->getOperand(0), "", bo);
+        op1 = BinaryOperator::CreateFNeg(bo->getOperand(0), "", bo);
         // c => -c
-        op2 = BinaryOperator::CreateNeg(bo->getOperand(1), "", bo);
+        op2 = BinaryOperator::CreateFNeg(bo->getOperand(1), "", bo);
         // b*c => -b * -c
         op = BinaryOperator::Create(Instruction::FMul, op1, op2, "", bo);
         bo->replaceAllUsesWith(op);
@@ -689,16 +689,18 @@ void Substitution::divNeg(BinaryOperator *bo) {
     }
     else if (bo->getOpcode() == Instruction::FDiv) {
         // b => -b
-        op1 = BinaryOperator::CreateNeg(bo->getOperand(0), "", bo);
+        op1 = BinaryOperator::CreateFNeg(bo->getOperand(0), "", bo);
         // c => -c
-        op2 = BinaryOperator::CreateNeg(bo->getOperand(1), "", bo);
+        op2 = BinaryOperator::CreateFNeg(bo->getOperand(1), "", bo);
         // b/c => -b / -c
         op = BinaryOperator::Create(Instruction::FDiv, op1, op2, "", bo);
         bo->replaceAllUsesWith(op);
     }
 }
 
-void Substitution::remReady(BinaryOperator *bo) {
+// In fact, I do not know what rem is.
+// Plz help me.
+void Substitution::remObfuscation(BinaryOperator *bo) {
     BinaryOperator *op = NULL;
 
     // Create rem
@@ -708,12 +710,17 @@ void Substitution::remReady(BinaryOperator *bo) {
     }
 }
 
-void Substitution::shiReady(BinaryOperator *bo) {
+// Maybe do not need obfuscation.
+// If someone have a good idea, you can tell to me.
+void Substitution::shiObfuscation(BinaryOperator *bo) {
     BinaryOperator *op = NULL;
 
-    // Create rem
+    // Create shift
     if (bo->getOpcode() == Instruction::Shl) {
+        // a << b => a * pow(2,b)
     } else if (bo->getOpcode() == Instruction::LShr) {
+        // a > 0 or a < 0
     } else if (bo->getOpcode() == Instruction::AShr) {
+        // a >> b => a / pow(2,b)
     }
 }
