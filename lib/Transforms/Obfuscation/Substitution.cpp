@@ -698,15 +698,27 @@ void Substitution::divNeg(BinaryOperator *bo) {
     }
 }
 
-// In fact, I do not know what rem is.
-// Plz help me.
+// Now I know it is a mod b
 void Substitution::remObfuscation(BinaryOperator *bo) {
     BinaryOperator *op = NULL;
 
     // Create rem
     if (bo->getOpcode() == Instruction::FRem) {
+        // unfinished
     } else if (bo->getOpcode() == Instruction::SRem) {
+        // a % b => (a + b) % b
+        // a => a + b
+        op = BinaryOperator::Create(Instruction::Add, bo->getOperand(0), bo->getOperand(1), "", bo);
+        // (a + b) % b
+        op = BinaryOperator::Create(Instruction::SRem, op, bo->getOperand(1), "", bo);
+        bo->replaceAllUsesWith(op);
     } else if (bo->getOpcode() == Instruction::URem) {
+        // a % b => (a + b) % b
+        // a => a + b
+        op = BinaryOperator::Create(Instruction::Add, bo->getOperand(0), bo->getOperand(1), "", bo);
+        // (a + b) % b
+        op = BinaryOperator::Create(Instruction::URem, op, bo->getOperand(1), "", bo);
+        bo->replaceAllUsesWith(op);
     }
 }
 
