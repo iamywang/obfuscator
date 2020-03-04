@@ -51,6 +51,7 @@
 #include "llvm/Transforms/Obfuscation/Split.h"
 #include "llvm/Transforms/Obfuscation/Substitution.h"
 #include "llvm/Transforms/Obfuscation/CryptoUtils.h"
+#include "llvm/Transforms/Obfuscation/StringObfuscation.h"
 
 using namespace llvm;
 
@@ -134,6 +135,13 @@ static cl::opt<bool> EnableSimpleLoopUnswitch(
              "cleanup passes integrated into the loop pass manager pipeline."));
 
 // Flags for obfuscation
+
+static cl::opt<std::string> Seed("seed", cl::init(""),
+                                 cl::desc("seed for the random"));
+
+static cl::opt<bool> StringObf("sobf", cl::init(false),
+                               cl::desc("Enable the string obfuscation"));
+
 static cl::opt<bool> Flattening("fla", cl::init(false),
                                 cl::desc("Enable the flattening pass"));
 
@@ -469,7 +477,7 @@ void PassManagerBuilder::populateModulePassManager(
 
   // Allow forcing function attributes as a debugging and tuning aid.
   MPM.add(createForceFunctionAttrsLegacyPass());
-
+  MPM.add(createStringObfuscation(StringObf));
   MPM.add(createSplitBasicBlock(Split));
   MPM.add(createBogus(BogusControlFlow));
   MPM.add(createFlattening(Flattening));
